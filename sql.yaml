@@ -1,0 +1,33 @@
+---
+- name: Install MySQL Community Server
+  hosts: dbservers
+  become: true  # Run tasks with elevated privileges (sudo)i
+  vars:
+    my_proxy_env:
+      http_proxy: http://***:***@35.200.146.27:8080
+      https_proxy: https://***:***@35.200.146.27:8080
+      no_proxy: .my-company.com, .my-other-internal-site.com
+
+  tasks:
+    - name: Install the MySQL repository package
+      yum:
+        name: http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+        state: present
+#      timeout: 300
+      environment: "{{ my_proxy_env }}"
+
+    - name: Install MySQL Community Server
+      yum:
+        name: mysql-community-server
+        state: present
+      environment: "{{ my_proxy_env }}"
+
+    - name: Start MySQL service
+      service:
+        name: mysqld
+        state: started
+
+    - name: Enable MySQL service on boot
+      service:
+        name: mysqld
+        enabled: yes
