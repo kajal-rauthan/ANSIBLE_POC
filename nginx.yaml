@@ -1,0 +1,22 @@
+---
+- name: Setup NGINX Server
+  hosts: webservers
+  remote_user: kajal
+  become: yes
+
+  tasks:
+
+  - name: Install NGINX
+    yum:
+      name: nginx
+      state: latest
+
+  - name: copy web page template
+    template:
+      src: index.html
+      dest: /usr/share/nginx/index.html
+
+  - name: start nginx
+    service:
+       name: nginx
+       state: started
